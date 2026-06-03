@@ -3,10 +3,14 @@ const express = require("express");
 const User = require("./models/user");
 const { validateSignupRequest } = require("./utils/validator");
 const bcrypt = require("bcrypt");
+const jsonwebtoken = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+const { userAuth } = require("./middlewares/userAuth");
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
   try {
@@ -31,13 +35,24 @@ app.post("/login", async (req, res) => {
     if (!user) {
       throw new Error("User not found");
     }
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    const isPasswordMatch = await user.validatePassword(password);
     if (!isPasswordMatch) {
       throw new Error("Invalid password");
     }
+    const token = await user.getJwtToken();
+    res.cookie("token", token);
     res.send("User logged in successfully");
   } catch (error) {
     res.status(500).send("Error logging in: " + error.message);
+  }
+});
+
+app.get("/profile", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    res.send(user);
+  } catch (error) {
+    res.status(500).send("Error fetching profile: " + error.message);
   }
 });
 

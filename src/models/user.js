@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
+const jsonwebtoken = require("jsonwebtoken");
+
 const userSchema = new mongoose.Schema({
   firstName: { type: String, maxlength: 20, required: true },
   lastName: { type: String, maxlength: 20 },
@@ -54,6 +57,22 @@ const userSchema = new mongoose.Schema({
     default: "This is default description",
   },
 });
+
+// Helper functions -> to offload any complex logic from route handlers and controllers
+userSchema.methods.getJwtToken = async function () {
+  const user = this;
+  const token = await jsonwebtoken.sign({ userId: user._id }, "secret@key", {
+    expiresIn: "1h",
+  });
+  return token;
+};
+
+userSchema.methods.validatePassword = async function (password) {
+  const user = this;
+  const passwordHash = user.password;
+  const isPasswordMatch = await bcrypt.compare(password, passwordHash);
+  return isPasswordMatch;
+};
 
 const userModel = new mongoose.model("User", userSchema);
 
