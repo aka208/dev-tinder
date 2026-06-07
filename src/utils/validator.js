@@ -15,6 +15,22 @@ const validateSignupRequest = (req) => {
   }
 };
 
+const validateFieldsToUpdate = (req) => {
+  const ALLOWED_FIELDS = [
+    "firstName",
+    "lastName",
+    "about",
+    "emailId",
+    "photoUrl",
+    "skills",
+  ];
+  const isAllowed = Object.keys(req.body).every((m) =>
+    ALLOWED_FIELDS.includes(m),
+  );
+  return isAllowed;
+};
+
 module.exports = {
   validateSignupRequest,
+  validateFieldsToUpdate,
 };
