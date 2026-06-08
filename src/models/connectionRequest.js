@@ -5,9 +5,11 @@ const connectionSchema = new mongoose.Schema(
   {
     fromUserId: {
       type: mongoose.Types.ObjectId,
+      ref: "User",
     },
     toUserId: {
       type: mongoose.Types.ObjectId,
+      ref: "User",
     },
 
     status: {
