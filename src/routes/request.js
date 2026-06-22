@@ -19,7 +19,7 @@ requestRouter.get("/sendConnections", userAuth, async (req, res) => {
 requestRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const fromUserId = req.user._id;
       const toUserId = req.params?.toUserId;
@@ -88,34 +88,29 @@ requestRouter.post(
       const status = req.params.status;
       const requestId = req.params.requestId;
       const allowedStatus = ["accepted", "rejected"];
+
       if (!allowedStatus.includes(status)) {
         return res.status(400).json({ message: "Not a valid status!" });
       }
 
-      if (connection.toUserId != loggedInUserId) {
-        return res
-          .status(400)
-          .send("Logged In User id do not match with reciever user id.");
-      }
       const connection = await ConnectionRequest.findOne({
         _id: requestId,
         toUserId: loggedInUserId,
         status: "interested",
       });
-      if (connection.toUserId != loggedInUserId) {
-        return res
-          .status(400)
-          .send({
-            message: "Logged In User id do not match with reciever user id.",
-          });
+      if (connection.toUserId.toString() != loggedInUserId.toString()) {
+        return res.status(400).send({
+          message: "Logged In User id do not match with reciever user id.",
+        });
       }
       if (!connection) {
         throw new Error("No request id found!");
       }
-      const data = await ConnectionRequest.save();
-      res.status().send({ message: "Request accepted", data });
+      const data = await connection.save();
+      res.send({ message: "Request accepted", data });
     } catch (error) {
-      res.status(404).send("Error: ", error);
+      console.log(error);
+      res.status(400).send("Error: ", error);
     }
   },
 );

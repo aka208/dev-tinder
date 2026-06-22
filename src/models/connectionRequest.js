@@ -29,7 +29,7 @@ connectionSchema.pre("save", function (next) {
   if (connectionSchema.fromUserId.equals(connectionSchema.toUserId)) {
     throw new Error("Cannnot send request to same logged in user id.");
   }
-  next();
+  next;
 });
 const ConnectionRequest = new mongoose.model("connection", connectionSchema);
 
