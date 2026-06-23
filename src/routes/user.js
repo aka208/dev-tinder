@@ -41,13 +41,15 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       })
       .populate("fromUserId", USER_SAFE_DATA)
       .populate("toUserId", USER_SAFE_DATA);
+    console.log("CON", connections);
 
-    const userData = connectionRequest.map((connection) => {
+    const userData = connections.map((connection) => {
       if (connection.fromUserId._id.toString() === loggedInUserId.toString()) {
         return connection.toUserId;
       }
       return connection.fromUserId;
     });
+    console.log("USER", userData);
 
     res.json({ message: "Connections fetched", data: userData });
   } catch (error) {

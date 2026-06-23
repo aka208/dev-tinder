@@ -98,6 +98,7 @@ requestRouter.post(
         toUserId: loggedInUserId,
         status: "interested",
       });
+      console.log("connection", connection);
       if (connection.toUserId.toString() != loggedInUserId.toString()) {
         return res.status(400).send({
           message: "Logged In User id do not match with reciever user id.",
@@ -106,11 +107,12 @@ requestRouter.post(
       if (!connection) {
         throw new Error("No request id found!");
       }
+      connection.status = status;
       const data = await connection.save();
       res.send({ message: "Request accepted", data });
     } catch (error) {
       console.log(error);
-      res.status(400).send("Error: ", error);
+      res.status(404).send("Error: ", error);
     }
   },
 );
