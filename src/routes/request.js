@@ -8,14 +8,6 @@ const { Connection } = require("mongoose");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
-requestRouter.get("/sendConnections", userAuth, async (req, res) => {
-  try {
-    // const user = req.user;
-    res.send("Connection request sent!!");
-  } catch (error) {
-    res.status(500).send("Error fetching profile: " + error.message);
-  }
-});
 requestRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
