@@ -17,10 +17,6 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
       })
       .populate("fromUserId", USER_SAFE_DATA);
 
-    // if (data.length === 0) {
-    //   res.json({ message: "No data found" });
-    // }
-
     res.json({ message: "Requests fetched", data });
   } catch (error) {
     res.status(400).json({ message: "Something went wrong" });
