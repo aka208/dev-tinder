@@ -1,4 +1,3 @@
-const { createNextState } = require("@reduxjs/toolkit");
 const mongoose = require("mongoose");
 
 const connectionSchema = new mongoose.Schema(
